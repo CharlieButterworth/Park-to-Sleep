@@ -1,0 +1,26 @@
+[
+    {
+        "model": "parktosleepAPI.daysavailable",
+        "pk": 1,
+        "fields": {
+            "days": 1,
+            "rental_post": 2
+        }
+    },
+    {
+        "model": "parktosleepAPI.daysavailable",
+        "pk": 2,
+        "fields": {
+            "days": 4,
+            "rental_post": 1
+        }
+    },
+    {
+        "model": "parktosleepAPI.daysavailable",
+        "pk": 3,
+        "fields": {
+            "days": 6,
+            "rental_post": 3
+        }
+    }
+]
