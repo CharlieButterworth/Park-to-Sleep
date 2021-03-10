@@ -1,0 +1,44 @@
+[
+    {
+        "model": "parktosleepAPI.rentee",
+        "pk": 1,
+        "fields": {
+            "first_name": "Charlie",
+            "last_name": "Smith",
+            "address": "123 street ave",
+            "city": "nashville",
+            "state": "Tennessee",
+            "country": "USA",
+            "phone": 1233452022,
+            "email": "cb@css.com"
+        }
+    },
+    {
+        "model": "parktosleepAPI.rentee",
+        "pk": 2,
+        "fields": {
+            "first_name": "Jon",
+            "last_name": "Lowe",
+            "address": "321 street ave",
+            "city": "memphis",
+            "state": "Tennessee",
+            "country": "USA",
+            "phone": 1233452022,
+            "email": "cb@css.com"
+        }
+    },
+    {
+        "model": "parktosleepAPI.rentee",
+        "pk": 3,
+        "fields": {
+            "first_name": "Ryan",
+            "last_name": "Smithie",
+            "address": "985 street ave",
+            "city": "nashville",
+            "state": "Mississippi",
+            "country": "USA",
+            "phone": 1233452022,
+            "email": "cb@css.com"
+        }
+    }
+]

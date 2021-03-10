@@ -1,0 +1,10 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "ParkToSleep",
+            "database": "db.sqlite3"
+        }
+    ]
+}
