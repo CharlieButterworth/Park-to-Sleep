@@ -15,12 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework import routers
 from django.conf.urls import url, include
-from parktosleepAPI.views import register_user, login_user
+from parktosleepAPI.views import register_user, login_user, RentalPostsView
 
+router = routers.DefaultRouter(trailing_slash=False)
+router.register(r'rentalposts', RentalPostsView, 'rentalpost')
 
 urlpatterns = [
     path('register', register_user),
+    path('', include(router.urls)),
     path('login', login_user),
     path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
 ]
