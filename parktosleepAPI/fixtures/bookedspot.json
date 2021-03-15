@@ -3,27 +3,9 @@
         "model": "parktosleepAPI.bookedspot",
         "pk": 1,
         "fields": {
-            "renter": 3,
+            "renter": 1,
             "rental_spot": 1,
             "date": "2021-10-31"
-        }
-    },
-    {
-        "model": "parktosleepAPI.bookedspot",
-        "pk": 1,
-        "fields": {
-            "renter": 1,
-            "rental_spot": 2,
-            "date": "2021-11-24"
-        }
-    },
-    {
-        "model": "parktosleepAPI.bookedspot",
-        "pk": 1,
-        "fields": {
-            "renter": 2,
-            "rental_spot": 3,
-            "date": "2021-09-19"
         }
     }
 ]

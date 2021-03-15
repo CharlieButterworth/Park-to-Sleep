@@ -12,33 +12,5 @@
             "start_time": "12:30:32",
             "end_time": "21:37:42"
         }
-    },
-    {
-        "model": "parktosleepAPI.rentalpost",
-        "pk": 2,
-        "fields": {
-            "rentee": 3,
-            "max_length": 24,
-            "description": "The spot is awful",
-            "address": "123 hill ave",
-            "city": "Denver",
-            "state": "CO",
-            "start_time": "14:11:32",
-            "end_time": "43:22:12"
-        }
-    },
-    {
-        "model": "parktosleepAPI.rentalpost",
-        "pk": 3,
-        "fields": {
-            "rentee": 2,
-            "max_length": 54,
-            "description": "The spot is dirty",
-            "address": "934 secret ave",
-            "city": "memphis",
-            "state": "Tennessee",
-            "start_time": "12:54:45",
-            "end_time": "08:34:42"
-        }
     }
 ]
