@@ -80,14 +80,33 @@ class RentalPostsView(ViewSet):
         return Response(serializer.data)
 
 
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name')
+
+
+class RenteeSerializer(serializers.ModelSerializer):
+
+    pts_user = UserSerializer(many=False)
+
+    class Meta:
+
+        model = Rentee
+        fields = ["pts_user", ]
+
+
 class RentalPostSerializer(serializers.ModelSerializer):
     """JSON serializer for games
 
     Arguments:
         serializer type
     """
+    rentee = RenteeSerializer(many=False)
+
     class Meta:
         model = RentalPost
         fields = ('id', 'rentee', 'max_length', 'description',
-                  'city', 'state', 'address', 'start_time', 'end_time')
-        depth = 1
+                  'city', 'state', 'address', 'start_time', 'end_time',)
+        depth = 2
