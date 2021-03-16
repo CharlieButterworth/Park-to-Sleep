@@ -20,18 +20,18 @@ class RentalPostsView(ViewSet):
             Response -- JSON serialized game instance
         """
 
-        # pts_user = Rentee.objects.get(user=request.auth.user)
+        pts_user = Rentee.objects.get(pts_user=request.auth.user)
 
         rentalpost = RentalPost()
-        # rentalpost.rentee = pts_user
-        rentalpost.maxLength = request.data["max_length"]
+        rentalpost.rentee = pts_user
+        rentalpost.max_length = request.data["maxLength"]
         rentalpost.description = request.data["description"]
         rentalpost.city = request.data["city"]
-        rentalpost.approved = True
+        # rentalpost.approved = True
         rentalpost.state = request.data["state"]
         rentalpost.address = request.data["address"]
-        rentalpost.startTime = request.data["start_time"]
-        rentalpost.endTime = request.data["end_time"]
+        rentalpost.start_time = request.data["start_time"]
+        rentalpost.end_time = request.data["end_time"]
 
         try:
             rentalpost.save()
