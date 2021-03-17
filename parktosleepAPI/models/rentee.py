@@ -9,5 +9,4 @@ class Rentee(models.Model):
     state = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
     phone = models.IntegerField()
-    email = models.EmailField(max_length=254)
     pts_user = models.ForeignKey(User, on_delete=models.CASCADE)

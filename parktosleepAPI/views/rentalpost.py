@@ -27,7 +27,6 @@ class RentalPostsView(ViewSet):
         rentalpost.max_length = request.data["maxLength"]
         rentalpost.description = request.data["description"]
         rentalpost.city = request.data["city"]
-        # rentalpost.approved = True
         rentalpost.state = request.data["state"]
         rentalpost.address = request.data["address"]
         rentalpost.start_time = request.data["start_time"]
@@ -78,6 +77,24 @@ class RentalPostsView(ViewSet):
             rentalposts, many=True, context={'request': request})
 
         return Response(serializer.data)
+
+    def destroy(self, request, pk=None):
+        """Handle DELETE requests for a single rental post
+
+        Returns:
+            Response -- 200, 404, or 500 status code
+        """
+        try:
+            rentalpost = RentalPost.objects.get(pk=pk)
+            rentalpost.delete()
+
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        except RentalPost.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class UserSerializer(serializers.ModelSerializer):

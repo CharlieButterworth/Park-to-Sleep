@@ -6,5 +6,6 @@
             "name": "ParkToSleep",
             "database": "db.sqlite3"
         }
-    ]
+    ],
+    "python.pythonPath": "/Users/charlie/.local/share/virtualenvs/ParkToSleep-7bWAM0V-/bin/python"
 }
