@@ -8,11 +8,43 @@ from rest_framework import serializers
 from rest_framework import status
 from django.contrib.auth.models import User
 from datetime import date
-from parktosleepAPI.models import RentalPost, Rentee
+from rest_framework.decorators import action
+from parktosleepAPI.models import RentalPost, Rentee, BookedSpot
 
 
 class RentalPostsView(ViewSet):
     """Rental Posts"""
+
+    @action(methods=['post', ], detail=True)
+    def book(self, request, pk=None):
+        """Managing users booking rental spots"""
+
+        # A gamer wants to sign up for an event
+        if request.method == "POST":
+            # The pk would be `2` if the URL above was requested
+            rental_spot = RentalPost.objects.get(pk=pk)
+
+            # Django uses the `Authorization` header to determine
+            # which user is making the request to sign up
+            renter = Rentee.objects.get(pts_user=request.auth.user)
+
+            try:
+                # Determine if the user is already signed up
+                book = BookedSpot.objects.get(
+                    rental_spot=rental_spot, renter=renter)
+                return Response(
+                    {'message': 'This spot is already booked.'},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+            except BookedSpot.DoesNotExist:
+                # The spot is not booked.
+                book = BookedSpot()
+                book.rental_spot = rental_spot
+                book.renter = renter
+                book.date = request.data['date']
+                book.save()
+
+                return Response({}, status=status.HTTP_201_CREATED)
 
     def create(self, request):
         """Handle POST operations
@@ -71,10 +103,21 @@ class RentalPostsView(ViewSet):
 
         rentalposts = RentalPost.objects.all()
 
+        sort_parameter = self.request.query_params.get('sortby', None)
+
+        if sort_parameter is not None and sort_parameter == 'user':
+            current_pts_user = Rentee.objects.get(pts_user=request.auth.user)
+            user_posts = RentalPost.objects.filter(
+                rentee=current_pts_user)
+
+            serializer = RentalPostSerializer(
+                user_posts, many=True, context={'request': request})
+
+            return Response(serializer.data)
         # Run the  RentalPost objects throught the serializer to parse wanted properties and to return JS readble code.
 
-        serializer = RentalPostSerializer(
-            rentalposts, many=True, context={'request': request})
+        serializer = RentalPostSerializer(rentalposts,
+                                          many=True, context={'request': request})
 
         return Response(serializer.data)
 

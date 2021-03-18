@@ -17,10 +17,11 @@ from django.contrib import admin
 from django.urls import path
 from rest_framework import routers
 from django.conf.urls import url, include
-from parktosleepAPI.views import register_user, login_user, RentalPostsView
+from parktosleepAPI.views import register_user, login_user, RentalPostsView, BookSpotView
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'rentalposts', RentalPostsView, 'rentalpost')
+router.register(r'bookedspots', BookSpotView, 'bookedspot')
 
 urlpatterns = [
     path('register', register_user),
