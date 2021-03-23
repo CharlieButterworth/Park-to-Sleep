@@ -29,7 +29,7 @@ class RentalPostsView(ViewSet):
             renter = Rentee.objects.get(pts_user=request.auth.user)
 
             try:
-                # Determine if the user is already signed up
+                # Determine if the spot is already booked
                 book = BookedSpot.objects.get(
                     rental_spot=rental_spot, renter=renter)
                 return Response(
@@ -41,7 +41,7 @@ class RentalPostsView(ViewSet):
                 book = BookedSpot()
                 book.rental_spot = rental_spot
                 book.renter = renter
-                book.date = request.data['date']
+                book.date = request.data["date"]
                 book.save()
 
                 return Response({}, status=status.HTTP_201_CREATED)
@@ -121,6 +121,26 @@ class RentalPostsView(ViewSet):
 
         return Response(serializer.data)
 
+    def update(self, request, pk=None):
+
+        rentalpost = RentalPost.objects.get(pk=pk)
+
+        pts_user = Rentee.objects.get(pts_user=request.auth.user)
+
+        rentalpost = RentalPost()
+        rentalpost.rentee = pts_user
+        rentalpost.max_length = request.data["maxLength"]
+        rentalpost.description = request.data["description"]
+        rentalpost.city = request.data["city"]
+        rentalpost.state = request.data["state"]
+        rentalpost.address = request.data["address"]
+        rentalpost.start_time = request.data["start_time"]
+        rentalpost.end_time = request.data["end_time"]
+
+        rentalpost.save()
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)
+
     def destroy(self, request, pk=None):
         """Handle DELETE requests for a single rental post
 
@@ -144,7 +164,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name')
+        fields = ('id', 'first_name', 'last_name',)
 
 
 class RenteeSerializer(serializers.ModelSerializer):
@@ -154,11 +174,12 @@ class RenteeSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Rentee
-        fields = ["pts_user", ]
+        fields = ["pts_user", 'phone']
+        depth = 2
 
 
 class RentalPostSerializer(serializers.ModelSerializer):
-    """JSON serializer for games
+    """JSON serializer for Rental Postd
 
     Arguments:
         serializer type

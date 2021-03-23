@@ -22,6 +22,7 @@ from parktosleepAPI.views import register_user, login_user, RentalPostsView, Boo
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'rentalposts', RentalPostsView, 'rentalpost')
 router.register(r'bookedspots', BookSpotView, 'bookedspot')
+router.register(r'newbookings', BookSpotView, 'bookedspot')
 
 urlpatterns = [
     path('register', register_user),

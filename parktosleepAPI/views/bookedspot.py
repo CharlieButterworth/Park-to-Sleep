@@ -13,6 +13,7 @@ from parktosleepAPI.models import RentalPost, Rentee, BookedSpot
 
 class BookSpotView(ViewSet):
 
+    #   This will create the booked spot
     def create(self, request, pk=None):
 
         pts_user = Rentee.objects.get(pts_user=request.auth.user)
@@ -63,6 +64,30 @@ class BookSpotView(ViewSet):
 
         bookedspot = BookedSpot.objects.all()
 
+        sort_parameter = self.request.query_params.get('sortby', None)
+
+        if sort_parameter is not None and sort_parameter == 'user':
+            current_pts_user = Rentee.objects.get(
+                pts_user=request.auth.user)
+            user_bookings = BookedSpot.objects.filter(
+                renter=current_pts_user)
+
+            serializer = BookedSpotSerializer(
+                user_bookings, many=True, context={'request': request})
+
+            return Response(serializer.data)
+
+        if sort_parameter is not None and sort_parameter == 'rentee':
+            current_pts_user = Rentee.objects.get(
+                pts_user=request.auth.user)
+            user_bookings = BookedSpot.objects.filter(
+                renter=current_pts_user)
+
+            serializer = BookedSpotSerializer(
+                user_bookings, many=True, context={'request': request})
+
+            return Response(serializer.data)
+
         # Run the  RentalPost objects throught the serializer to parse wanted properties and to return JS readble code.
 
         serializer = BookedSpotSerializer(bookedspot,
@@ -71,7 +96,26 @@ class BookSpotView(ViewSet):
         return Response(serializer.data)
 
 
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name')
+        depth = 2
+
+
+class RenteeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Rentee
+        fields = ('pts_user', )
+
+
 class BookedSpotSerializer(serializers.ModelSerializer):
+
+    renter = RenteeSerializer(many=False)
+
     class Meta:
         model = BookedSpot
-        fields = ('renter', 'rental_spot', 'date')
+        fields = ('renter', 'date', 'rental_spot',)
+        depth = 3
