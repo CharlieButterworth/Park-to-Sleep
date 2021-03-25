@@ -7,6 +7,9 @@ from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework import status
 from django.contrib.auth.models import User
+from datetime import timezone
+import datetime
+import pytz
 from datetime import date
 from rest_framework.decorators import action
 from parktosleepAPI.models import RentalPost, Rentee, BookedSpot
@@ -19,32 +22,60 @@ class RentalPostsView(ViewSet):
     def book(self, request, pk=None):
         """Managing users booking rental spots"""
 
-        # A gamer wants to sign up for an event
+        # A user wants to book a spot
         if request.method == "POST":
-            # The pk would be `2` if the URL above was requested
+            # The pk would be `id` if the URL above was requested
             rental_spot = RentalPost.objects.get(pk=pk)
 
             # Django uses the `Authorization` header to determine
             # which user is making the request to sign up
             renter = Rentee.objects.get(pts_user=request.auth.user)
 
+            # try:
+            # Determine if the spot is already booked
+            # replace this string with whatever method or function collects your data
+            date_in = request.data["date"]
+
+            date_processing = date_in.replace(
+                'T', ' ')
+            date_processing += ":00"
+
+            date_is_processing = date_in.replace(
+                'T', '-').replace(':', '-').split('-')
+            date_is_processing = [int(v) for v in date_is_processing]
+            datebooked = datetime.datetime(*date_is_processing)
+            awareTimezone = pytz.utc.localize(datebooked)
             try:
-                # Determine if the spot is already booked
-                book = BookedSpot.objects.get(
-                    rental_spot=rental_spot, renter=renter)
-                return Response(
-                    {'message': 'This spot is already booked.'},
-                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                books = BookedSpot.objects.all()
+
+                alreadybooked = BookedSpot.objects.get(
+                    rental_spot=rental_spot
                 )
+                book = BookedSpot.objects.get(
+                    date=date_processing)
+                # except RuntimeWarning:
+
+                # print(alreadybooked.rental_spot.start_time,
+                #       alreadybooked.rental_spot.end_time)
+
             except BookedSpot.DoesNotExist:
+
                 # The spot is not booked.
                 book = BookedSpot()
                 book.rental_spot = rental_spot
                 book.renter = renter
                 book.date = request.data["date"]
-                book.save()
 
+                if awareTimezone > rental_spot.end_time or awareTimezone < rental_spot.start_time:
+                    return Response(
+                        {'message': 'Date is outside of booking range.'},
+                        status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                    )
+                book.save()
                 return Response({}, status=status.HTTP_201_CREATED)
+
+            except BookedSpot.MultipleObjectsReturned:
+                return Response({}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def create(self, request):
         """Handle POST operations
@@ -116,10 +147,22 @@ class RentalPostsView(ViewSet):
             return Response(serializer.data)
         # Run the  RentalPost objects throught the serializer to parse wanted properties and to return JS readble code.
 
-        serializer = RentalPostSerializer(rentalposts,
-                                          many=True, context={'request': request})
+        post = self.request.query_params.get('rentalpost_id', None)
+        if post is not None:
+            rentalposts = rentalposts.filter(rentalposts_id=post)
+        try:
+            for rp in rentalposts:
+                if rp.rentee == request.auth.user:
+                    rp.is_current_user = True
+                else:
+                    rp.is_current_user = False
 
-        return Response(serializer.data)
+            serializer = RentalPostSerializer(rentalposts,
+                                              many=True, context={'request': request})
+
+            return Response(serializer.data)
+        except Exception as ex:
+            return HttpResponseServerError(ex)
 
     def update(self, request, pk=None):
 
@@ -127,9 +170,8 @@ class RentalPostsView(ViewSet):
 
         pts_user = Rentee.objects.get(pts_user=request.auth.user)
 
-        rentalpost = RentalPost()
         rentalpost.rentee = pts_user
-        rentalpost.max_length = request.data["maxLength"]
+        rentalpost.max_length = request.data["max_length"]
         rentalpost.description = request.data["description"]
         rentalpost.city = request.data["city"]
         rentalpost.state = request.data["state"]
@@ -137,7 +179,7 @@ class RentalPostsView(ViewSet):
         rentalpost.start_time = request.data["start_time"]
         rentalpost.end_time = request.data["end_time"]
 
-        rentalpost.save()
+        rentalpost.save(force_update=True)
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 

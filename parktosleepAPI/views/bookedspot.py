@@ -106,9 +106,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RenteeSerializer(serializers.ModelSerializer):
 
+    pts_user = UserSerializer(many=False)
+
     class Meta:
         model = Rentee
-        fields = ('pts_user', )
+        fields = ('pts_user', 'phone')
 
 
 class BookedSpotSerializer(serializers.ModelSerializer):
