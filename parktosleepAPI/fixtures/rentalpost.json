@@ -9,8 +9,8 @@
             "address": "123 street ave",
             "city": "nashville",
             "state": "Tennessee",
-            "start_time": "2020-12-12 12:30:32",
-            "end_time": "2020-03-12 21:37:42"
+            "start_time": "2020-12-12",
+            "end_time": "2020-03-12"
         }
     }
 ]
