@@ -5,7 +5,7 @@ class BookedSpot(models.Model):
 
     renter = models.ForeignKey("Rentee", on_delete=models.CASCADE)
     rental_spot = models.ForeignKey("RentalPost", on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now=False, auto_now_add=False)
+    date = models.DateField(auto_now=False, auto_now_add=False)
 
     @property
     def is_current_user(self):

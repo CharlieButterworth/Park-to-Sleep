@@ -38,13 +38,13 @@ class RentalPostsView(ViewSet):
 
             date_processing = date_in.replace(
                 'T', ' ')
-            date_processing += ":00"
+            # date_processing += ":00"
 
             date_is_processing = date_in.replace(
                 'T', '-').replace(':', '-').split('-')
             date_is_processing = [int(v) for v in date_is_processing]
-            datebooked = datetime.datetime(*date_is_processing)
-            awareTimezone = pytz.utc.localize(datebooked)
+            datebooked = datetime.date(*date_is_processing)
+            # awareTimezone = pytz.utc.localize(datebooked)
             try:
                 books = BookedSpot.objects.all()
 
@@ -66,7 +66,7 @@ class RentalPostsView(ViewSet):
                 book.renter = renter
                 book.date = request.data["date"]
 
-                if awareTimezone > rental_spot.end_time or awareTimezone < rental_spot.start_time:
+                if datebooked > rental_spot.end_time or datebooked < rental_spot.start_time:
                     return Response(
                         {'message': 'Date is outside of booking range.'},
                         status=status.HTTP_422_UNPROCESSABLE_ENTITY
