@@ -62,7 +62,6 @@ def register_user(request):
     rentee = Rentee.objects.create(
         address=req_body['address'],
         city=req_body['city'],
-        country=req_body['country'],
         state=req_body['state'],
         phone=req_body['phone'],
         pts_user=new_user
